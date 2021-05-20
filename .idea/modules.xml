@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Netty/Netty.iml" filepath="$PROJECT_DIR$/Netty/Netty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/RPC.iml" filepath="$PROJECT_DIR$/.idea/RPC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RPCDemo/RPCDemo.iml" filepath="$PROJECT_DIR$/RPCDemo/RPCDemo.iml" />
+    </modules>
+  </component>
+</project>
