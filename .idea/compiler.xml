@@ -2,15 +2,18 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Netty" />
         <module name="RPCDemo" />
+        <module name="Executors" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Executors" target="8" />
       <module name="Netty" target="8" />
       <module name="NettyPro" target="8" />
       <module name="RPCDemo" target="8" />

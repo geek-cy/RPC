@@ -5,6 +5,7 @@
       <list>
         <option value="$PROJECT_DIR$/Netty/pom.xml" />
         <option value="$PROJECT_DIR$/RPCDemo/pom.xml" />
+        <option value="$PROJECT_DIR$/Executors/pom.xml" />
       </list>
     </option>
   </component>
