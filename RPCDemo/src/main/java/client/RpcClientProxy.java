@@ -1,10 +1,7 @@
 package client;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import request.RpcRequest;
-import response.RpcResponse;
-
+import entity.RpcRequest;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -16,8 +13,8 @@ import java.lang.reflect.Proxy;
  */
 @AllArgsConstructor
 public class RpcClientProxy implements InvocationHandler {
-    private final String host;
-    private final int port;
+
+    private final RpcClient client;
 
     /**
      * 通过Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候
@@ -26,11 +23,6 @@ public class RpcClientProxy implements InvocationHandler {
     @SuppressWarnings("unchecked")
     public <T> T getProxy(Class<T> clazz) {
 
-        // newProxyInstance() ，这个方法主要用来生成一个代理对象。
-        // 这个方法一共有 3 个参数：
-        // loader :类加载器，用于加载代理对象。
-        // interfaces : 被代理类实现的一些接口；
-        // h : 实现了 InvocationHandler 接口的对象；
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
     }
 
@@ -48,7 +40,6 @@ public class RpcClientProxy implements InvocationHandler {
                 .parameters(args)
                 .paramTypes(method.getParameterTypes())
                 .build();
-        RpcClient rpcClient = new RpcClient();
-        return ((RpcResponse)rpcClient.sendRequest(rpcRequest,host,port)).getData();
+        return client.sendRequest(rpcRequest);
     }
 }

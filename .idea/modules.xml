@@ -4,8 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Executors/Executors.iml" filepath="$PROJECT_DIR$/Executors/Executors.iml" />
       <module fileurl="file://$PROJECT_DIR$/Netty/Netty.iml" filepath="$PROJECT_DIR$/Netty/Netty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Proxy/Proxy.iml" filepath="$PROJECT_DIR$/Proxy/Proxy.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/RPC.iml" filepath="$PROJECT_DIR$/.idea/RPC.iml" />
       <module fileurl="file://$PROJECT_DIR$/RPCDemo/RPCDemo.iml" filepath="$PROJECT_DIR$/RPCDemo/RPCDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Reflect/Reflect.iml" filepath="$PROJECT_DIR$/Reflect/Reflect.iml" />
     </modules>
   </component>
 </project>

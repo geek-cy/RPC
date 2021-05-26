@@ -15,7 +15,7 @@ Future接口以及其实现类FutureTask类都可以代表异步计算结果
 当Runnable接口或Callable接口的实现类提交给ThreadPoolExecutor或ScheduledThreadPoolExecutor执行
 
 #### Executor使用流程
-![](https://mmbiz.qpic.cn/mmbiz_png/iaIdQfEric9Txhic0Qsq8nQwP6XuEIAdOeJ0Dq8ReicceaNLWI7Of4Jf60V6O9iaCNmSNtZ1zyM5J4ia6QDEfv7CWVLw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](https://cdn.jsdelivr.net/gh/geek-cy/img/并发/流程.png)
 将创建完成实现了Runnable/Callable接口的对象直接交给ExecutorService执行:execute(Runnable command)
 
 或者将Runnable/Callable对象交给ExecutorService执行submit(Runnable task)/submit(Callable <T> task)
@@ -89,7 +89,7 @@ public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
 }
 ```
 可以看到corePoolSize置空，而maximumPoolSize被设置为Integer.MAX.VALUE,因此也是无界的。若主线程提交速度高于maximumPool中线程处理任务速度，则会耗尽cpu和内存资源
-![](https://mmbiz.qpic.cn/mmbiz_jpg/iaIdQfEric9Txhic0Qsq8nQwP6XuEIAdOeJsQCDY6ZAQQpnIv9E0IsSx1PD4hwuY6hS3Gdg42Bsz0pEicKQ604BLzA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](https://cdn.jsdelivr.net/gh/geek-cy/img/并发/SynchronousQueue.png)
 其中1为SynchronousQueue.offer(Runnable task)，2为execute(),3为SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)
 若当前有闲线程在执行3，主线程执行1与空闲线程配对成功，主线程把任务交给空闲线程执行2方法。
 若初始maximumPool为空或maximumPool无空闲线程时，将没有线程执行3,此时1将失败，CachedThreadPool会创建新线程执行任务，2方法执行完成
