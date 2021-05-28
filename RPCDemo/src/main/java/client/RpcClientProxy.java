@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * @Description jdk动态代理
+ *  jdk动态代理
  * @Author Cy
  * @Date 2021/5/20 22:38
  */
@@ -34,12 +34,15 @@ public class RpcClientProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // 生存一个RpcRequest对象发送出去
-        RpcRequest rpcRequest = RpcRequest.builder()
+        /*RpcRequest rpcRequest = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .parameters(args)
                 .paramTypes(method.getParameterTypes())
-                .build();
+                .build();*/
+        RpcRequest rpcRequest = new RpcRequest(method.getDeclaringClass().getName(),
+                method.getName(), args, method.getParameterTypes());
+        // 哪个服务开了进哪个
         return client.sendRequest(rpcRequest);
     }
 }

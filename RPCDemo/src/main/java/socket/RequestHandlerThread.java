@@ -1,7 +1,7 @@
-package socket.handler;
+package socket;
 
 import lombok.extern.slf4j.Slf4j;
-import registry.ServiceRegistry;
+import registry.ServiceProvider;
 import entity.RpcRequest;
 import entity.RpcResponse;
 
@@ -20,12 +20,12 @@ public class RequestHandlerThread implements Runnable {
 
     private Socket socket;
     private RequestHandler requestHandler;
-    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry) {
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceProvider serviceProvider) {
         this.socket = socket;
         this.requestHandler = requestHandler;
-        this.serviceRegistry = serviceRegistry;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class RequestHandlerThread implements Runnable {
              ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
             String interfaceName = rpcRequest.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
+            Object service = serviceProvider.getService(interfaceName);
             Object result = requestHandler.handler(rpcRequest,service);
             objectOutputStream.writeObject(RpcResponse.success(result));
             objectOutputStream.flush();

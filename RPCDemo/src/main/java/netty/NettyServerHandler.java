@@ -1,14 +1,14 @@
 package netty;
 
-import socket.handler.RequestHandler;
+import registry.ServiceProviderImpl;
+import socket.RequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
-import registry.DefaultServiceRegistry;
-import registry.ServiceRegistry;
+import registry.ServiceProvider;
 import entity.RpcRequest;
 import entity.RpcResponse;
 
@@ -21,11 +21,11 @@ import entity.RpcResponse;
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private static RequestHandler requestHandler;
-    private static ServiceRegistry serviceRegistry;
+    private static ServiceProvider serviceProvider;
 
     static {
         requestHandler = new RequestHandler();
-        serviceRegistry = new DefaultServiceRegistry();
+        serviceProvider = new ServiceProviderImpl();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         try {
             log.info("服务器收到请求:{}",msg);
             String interfaceName = msg.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
+            Object service = serviceProvider.getService(interfaceName);
             Object handler = requestHandler.handler(msg, service);
             ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(handler));
             future.addListener(ChannelFutureListener.CLOSE);

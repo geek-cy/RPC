@@ -1,4 +1,4 @@
-package socket.client;
+package socket;
 
 import client.RpcClient;
 import entity.RpcRequest;
@@ -7,6 +7,7 @@ import enumeration.ResponseCode;
 import enumeration.RpcError;
 import exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
+import serializer.CommonSerializer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,5 +49,10 @@ public class SocketClient implements RpcClient {
             log.error("调用时有错误发生：", e);
             throw new RpcException("服务调用失败: ", e);
         }
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+
     }
 }

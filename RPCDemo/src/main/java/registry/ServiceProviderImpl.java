@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2021/5/24 22:06
  */
 @Slf4j
-public class DefaultServiceRegistry implements ServiceRegistry{
+public class ServiceProviderImpl implements ServiceProvider {
 
     /**
      * 将服务名与提供服务的对象对应关系保存在ConcurrentHashMap中

@@ -1,4 +1,4 @@
-package socket.handler;
+package socket;
 
 import enumeration.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class RequestHandler {
     public Object invokeTargetMethod(RpcRequest rpcRequest,Object service) throws InvocationTargetException, IllegalAccessException {
         Method method;
         try {
-            method = service.getClass().getMethod(rpcRequest.getMethodName());
+            method = service.getClass().getMethod(rpcRequest.getMethodName(),rpcRequest.getParamTypes());
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND);
         }

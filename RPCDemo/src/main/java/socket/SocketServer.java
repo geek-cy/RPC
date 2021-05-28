@@ -1,9 +1,11 @@
-package socket.server;
+package socket;
 
-import socket.handler.RequestHandler;
-import socket.handler.RequestHandlerThread;
+import serializer.CommonSerializer;
+import server.RpcServer;
+import socket.RequestHandler;
+import socket.RequestHandlerThread;
 import lombok.extern.slf4j.Slf4j;
-import registry.ServiceRegistry;
+import registry.ServiceProvider;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,10 +28,10 @@ public class SocketServer implements RpcServer {
     private static final int KEEP_ALIVE_TIME = 60;
     private static final int BLOCKING_QUEUE_CAPACITY = 100;
     private RequestHandler requestHandler = new RequestHandler();
-    private final ServiceRegistry serviceRegistry;
+    private final ServiceProvider serviceProvider;
 
-    public SocketServer(ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
+    public SocketServer(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE,MAXIMUM_POOL_SIZE,KEEP_ALIVE_TIME,TimeUnit.SECONDS,workingQueue,threadFactory);
@@ -42,11 +44,26 @@ public class SocketServer implements RpcServer {
             while((socket = serverSocket.accept()) != null){
                 log.info("消费者连接:{}:{}",socket.getInetAddress(),socket.getPort());
                 // 开启一个线程，从ServiceRegistry获取提供服务的对象后，将RpcRequest和服务对象直接交给RequestHandler处理
-                threadPool.execute(new RequestHandlerThread(socket,requestHandler,serviceRegistry));
+                threadPool.execute(new RequestHandlerThread(socket,requestHandler, serviceProvider));
             }
             threadPool.shutdown();
         } catch (IOException e) {
             log.error("服务器启动时有错误发生:",e);
         }
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public <T> void publishService(Object service, Class<T> serviceClass) {
+
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+
     }
 }

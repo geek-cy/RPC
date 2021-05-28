@@ -3,12 +3,11 @@ import client.RpcClient;
 import client.RpcClientProxy;
 import org.junit.Test;
 import api.HelloObject;
-import registry.DefaultServiceRegistry;
-import registry.ServiceRegistry;
+import registry.ServiceProvider;
 import netty.NettyServer;
 import api.HelloService;
-
-import java.util.Scanner;
+import registry.ServiceProviderImpl;
+import serializer.KryoSerializer;
 
 /**
  * @Description
@@ -20,19 +19,20 @@ public class TestNetty {
     @Test
     public void testServer() {
         HelloService helloService = new HelloServiceImpl();
-        ServiceRegistry registry = new DefaultServiceRegistry();
+        ServiceProvider registry = new ServiceProviderImpl();
         registry.register(helloService);
-        NettyServer server = new NettyServer();
-        server.start(9000);
+        NettyServer server = new NettyServer("127.0.0.1",8000);
+        server.setSerializer(new KryoSerializer());
+        server.publishService(helloService,HelloService.class);
     }
 
     @Test
     public void testClient(){
-        RpcClient client = new NettyClient("127.0.0.1",9000);
+        RpcClient client = new NettyClient();
+        client.setSerializer(new KryoSerializer());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        Scanner s = new Scanner(System.in);
-        HelloObject object = new HelloObject(1,s.toString());
+        HelloObject object = new HelloObject(12,"This is a message");
         String hello = helloService.hello(object);
         System.out.println(hello);
     }
