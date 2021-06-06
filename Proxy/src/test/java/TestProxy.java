@@ -43,7 +43,6 @@ public class TestProxy {
         o.sell();
         s.sell();
         l.sell();
-
         ProxyClient proxyClient = new ProxyClient();
         ProxyInterface proxy = proxyClient.getProxy(ProxyInterface.class);
         proxy.use();

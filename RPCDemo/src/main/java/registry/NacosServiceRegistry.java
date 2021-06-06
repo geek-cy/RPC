@@ -6,7 +6,10 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import enumeration.RpcError;
 import exception.RpcException;
+import loadBalancer.LoadBalancer;
+import loadBalancer.RandomLoadBalancer;
 import lombok.extern.slf4j.Slf4j;
+import utils.NacosUtil;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -21,6 +24,15 @@ public class NacosServiceRegistry implements ServiceRegistry{
 
     private static final String SERVER_ADDR = "192.168.31.92:8848";
     private static final NamingService namingService;
+    private final LoadBalancer loadBalancer;
+
+    public NacosServiceRegistry() {
+        this.loadBalancer = new RandomLoadBalancer();
+    }
+
+    public NacosServiceRegistry(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
+    }
 
     static {
         try {
@@ -33,18 +45,14 @@ public class NacosServiceRegistry implements ServiceRegistry{
 
     @Override
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
-        try {
-            namingService.registerInstance(serviceName,inetSocketAddress.getHostName(),inetSocketAddress.getPort());
-        } catch (NacosException e) {
-            log.error("注册服务有错误发生",e);
-            throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);
-        }
+        NacosUtil.registerService(serviceName, inetSocketAddress);
     }
 
     @Override
     public InetSocketAddress lookupService(String serviceName) {
         try {
-            List<Instance> allInstances = namingService.getAllInstances(serviceName);
+            List<Instance> allInstances = NacosUtil.getAllInstance(serviceName);
+
             Instance instance = allInstances.get(0);// 此处涉及负载均衡
             return new InetSocketAddress(instance.getIp(),instance.getPort());
         } catch (NacosException e) {

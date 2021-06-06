@@ -7,19 +7,28 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Netty" />
+        <module name="Java" />
         <module name="Proxy" />
+        <module name="RPC-Client" />
+        <module name="Reflect" />
+        <module name="RPC-Core" />
+        <module name="Netty" />
         <module name="RPCDemo" />
         <module name="Executors" />
-        <module name="Reflect" />
+        <module name="RPC-Server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Executors" target="8" />
+      <module name="Java" target="8" />
       <module name="Netty" target="8" />
       <module name="NettyPro" target="8" />
       <module name="Proxy" target="8" />
       <module name="Reflect" target="8" />
+      <module name="RPC-Client" target="8" />
+      <module name="RPC-Common" target="8" />
+      <module name="RPC-Core" target="8" />
+      <module name="RPC-Server" target="8" />
       <module name="RPCDemo" target="8" />
     </bytecodeTargetLevel>
   </component>

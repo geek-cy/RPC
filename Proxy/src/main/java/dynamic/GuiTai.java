@@ -19,6 +19,9 @@ public class GuiTai implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println(method.getClass().getName());
+        System.out.println(method.getDeclaringClass().getName());
+        System.out.println(method.getName());
         System.out.println("销售开始 柜台是:"+this.getClass().getSimpleName());
         method.invoke(brand,args);
         System.out.println("销售结束");

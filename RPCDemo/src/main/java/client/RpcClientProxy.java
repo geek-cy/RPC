@@ -5,6 +5,7 @@ import entity.RpcRequest;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.UUID;
 
 /**
  *  jdk动态代理
@@ -40,9 +41,8 @@ public class RpcClientProxy implements InvocationHandler {
                 .parameters(args)
                 .paramTypes(method.getParameterTypes())
                 .build();*/
-        RpcRequest rpcRequest = new RpcRequest(method.getDeclaringClass().getName(),
+        RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),method.getDeclaringClass().getName(),
                 method.getName(), args, method.getParameterTypes());
-        // 哪个服务开了进哪个
         return client.sendRequest(rpcRequest);
     }
 }

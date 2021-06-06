@@ -4,9 +4,15 @@ import api.HelloObject;
 import registry.ServiceProvider;
 import api.HelloService;
 import registry.ServiceProviderImpl;
+import serializer.KryoSerializer;
 import socket.SocketClient;
 import socket.SocketServer;
-//import socket.SocketServer;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  * @Description
  * @Author Cy
@@ -17,16 +23,15 @@ public class TestSocket {
     @Test
     public void testServer(){
         HelloService helloService = new HelloServiceImpl();
-        ServiceProvider serviceProvider = new ServiceProviderImpl();
-        serviceProvider.register(helloService);
-        SocketServer socketServer = new SocketServer(serviceProvider);
-        socketServer.start(9000);
-
+        SocketServer socketServer = new SocketServer("127.0.0.1",8888);
+        socketServer.setSerializer(new KryoSerializer());
+        socketServer.publishService(helloService,HelloService.class);
     }
 
     @Test
     public void testClient(){
-        SocketClient client = new SocketClient("127.0.0.1", 9000);
+        SocketClient client = new SocketClient();
+        client.setSerializer(new KryoSerializer());
         RpcClientProxy proxy = new RpcClientProxy(client);
         // HelloService被代理接口
         HelloService helloService = proxy.getProxy(HelloService.class);

@@ -1,3 +1,4 @@
+import annotation.Service;
 import lombok.extern.slf4j.Slf4j;
 import api.HelloObject;
 import api.HelloService;
@@ -8,6 +9,7 @@ import api.HelloService;
  * @Date 2021/5/20 21:58
  */
 @Slf4j
+@Service
 public class HelloServiceImpl implements HelloService {
     @Override
     public String hello(HelloObject object) {

@@ -3,9 +3,13 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Executors/Executors.iml" filepath="$PROJECT_DIR$/Executors/Executors.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Java/Java.iml" filepath="$PROJECT_DIR$/Java/Java.iml" />
       <module fileurl="file://$PROJECT_DIR$/Netty/Netty.iml" filepath="$PROJECT_DIR$/Netty/Netty.iml" />
       <module fileurl="file://$PROJECT_DIR$/Proxy/Proxy.iml" filepath="$PROJECT_DIR$/Proxy/Proxy.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/RPC.iml" filepath="$PROJECT_DIR$/.idea/RPC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RPC-Client/RPC-Client.iml" filepath="$PROJECT_DIR$/RPC-Client/RPC-Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RPC-Core/RPC-Core.iml" filepath="$PROJECT_DIR$/RPC-Core/RPC-Core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RPC-Server/RPC-Server.iml" filepath="$PROJECT_DIR$/RPC-Server/RPC-Server.iml" />
       <module fileurl="file://$PROJECT_DIR$/RPCDemo/RPCDemo.iml" filepath="$PROJECT_DIR$/RPCDemo/RPCDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/Reflect/Reflect.iml" filepath="$PROJECT_DIR$/Reflect/Reflect.iml" />
     </modules>

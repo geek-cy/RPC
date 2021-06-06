@@ -1,12 +1,19 @@
 package socket;
 
+import enumeration.RpcError;
+import exception.RpcException;
+import factory.ThreadPoolFactory;
+import handler.RequestHandler;
+import hook.ShutdownHook;
+import registry.NacosServiceRegistry;
+import registry.ServiceProviderImpl;
+import registry.ServiceRegistry;
 import serializer.CommonSerializer;
 import server.RpcServer;
-import socket.RequestHandler;
-import socket.RequestHandlerThread;
 import lombok.extern.slf4j.Slf4j;
 import registry.ServiceProvider;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
@@ -19,32 +26,32 @@ import java.util.concurrent.*;
 
 @Slf4j
 public class SocketServer implements RpcServer {
-    // DefaultThreadFactory和PrivilegedThreadFactory
-    // DefaultThreadFactory就是创建一个普通的线程，非守护线程，优先级为5。
-    // PrivilegedThreadFactory增加了两个特性：ClassLoader和AccessControlContext，从而使运行在此类线程中的任务具有与当前线程相同的访问控制和类加载器。
-    private final ExecutorService threadPool;
-    private static final int CORE_POOL_SIZE = 5;
-    private static final int MAXIMUM_POOL_SIZE = 50;
-    private static final int KEEP_ALIVE_TIME = 60;
-    private static final int BLOCKING_QUEUE_CAPACITY = 100;
-    private RequestHandler requestHandler = new RequestHandler();
-    private final ServiceProvider serviceProvider;
 
-    public SocketServer(ServiceProvider serviceProvider) {
-        this.serviceProvider = serviceProvider;
-        BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
-        ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE,MAXIMUM_POOL_SIZE,KEEP_ALIVE_TIME,TimeUnit.SECONDS,workingQueue,threadFactory);
+    private final ExecutorService threadPool;
+    private final RequestHandler requestHandler = new RequestHandler();
+    private final ServiceProvider serviceProvider;
+    private final ServiceRegistry serviceRegistry;
+    private final String host;
+    private final int port;
+    private CommonSerializer serializer;
+    public SocketServer(String host,int port) {
+        threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-NettyServer");
+        serviceRegistry = new NacosServiceRegistry();
+        serviceProvider = new ServiceProviderImpl();
+        this.host = host;
+        this.port = port;
     }
 
-    public void start(int port){
+    @Override
+    public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)){
             log.info("服务器正在启动");
+            ShutdownHook.getShutdownHook().addClearAllHook();
             Socket socket;
             while((socket = serverSocket.accept()) != null){
                 log.info("消费者连接:{}:{}",socket.getInetAddress(),socket.getPort());
                 // 开启一个线程，从ServiceRegistry获取提供服务的对象后，将RpcRequest和服务对象直接交给RequestHandler处理
-                threadPool.execute(new RequestHandlerThread(socket,requestHandler, serviceProvider));
+                threadPool.execute(new RequestHandlerThread(socket,requestHandler, serviceRegistry,serializer));
             }
             threadPool.shutdown();
         } catch (IOException e) {
@@ -53,17 +60,19 @@ public class SocketServer implements RpcServer {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public <T> void publishService(Object service, Class<T> serviceClass) {
-
+        if(serializer == null){
+            log.error("未设置序列化器");
+            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+        }
+        serviceProvider.register(service);
+        serviceRegistry.register(serviceClass.getCanonicalName(),new InetSocketAddress(host,port));
+        start();
     }
 
     @Override
     public void setSerializer(CommonSerializer serializer) {
-
+        this.serializer = serializer;
     }
+
 }
