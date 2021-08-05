@@ -5,9 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 客户端调用的实体
- * @Author Cy
- * @Date 2021/6/4 19:19
+ * @author Cy
+ * @date 2021/6/21 15:15
  */
 @AllArgsConstructor
 @NoArgsConstructor

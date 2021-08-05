@@ -1,0 +1,14 @@
+server:
+  port: 8888
+
+dubbo:
+  application:
+    name: provider
+  registry:
+    address: nacos://192.168.31.92:8848
+    timeout: 6000
+  protocol:
+    name: dubbo
+    port: 8400
+  scan:
+    base-packages: com.dubbo

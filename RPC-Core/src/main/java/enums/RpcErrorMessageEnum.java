@@ -1,7 +1,24 @@
-package enums;/**
- * 
+package enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+/**
  * @author Cy
  * @date 2021/6/8 22:41
  */
-public class RpcErrorMessageEnum {
+@AllArgsConstructor
+@Getter
+@ToString
+public enum RpcErrorMessageEnum {
+
+    CLIENT_CONNECT_SERVER_FAILURE("客户端连接服务端失败"),
+    SERVICE_INVOCATION_FAILURE("服务调用失败"),
+    SERVICE_CAN_NOT_BE_FOUND("没有找到指定的服务"),
+    FAILED_TO_CONNECT_TO_SERVICE_REGISTRY("连接注册中心失败"),
+    SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("注册的服务没有实现任何接口"),
+    REQUEST_NOT_MATCH_RESPONSE("返回结果错误！请求和返回的相应不匹配");
+
+    private final String message;
 }

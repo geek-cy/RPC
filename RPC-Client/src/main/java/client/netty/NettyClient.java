@@ -5,15 +5,19 @@ import codec.CommonDecoder;
 import codec.CommonEncoder;
 import entity.RpcRequest;
 import entity.RpcResponse;
+import factory.SingletonFactory;
+import hook.ShutdownHook;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.AttributeKey;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import register.NacosServiceDiscovery;
+import register.ServiceDiscovery;
 import serializer.KryoSerializer;
-
+import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +28,15 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class NettyClient implements RpcClient {
 
-    private static Bootstrap bootstrap;
+    private final Bootstrap bootstrap;
+    private final EventLoopGroup group;
+    private final ChannelProvider channelProvider;
+    private final UnprocessedRequest unprocessedRequest;
+    private final ServiceDiscovery serviceDiscovery;
 
-    static {
-        NioEventLoopGroup group = new NioEventLoopGroup();
+    public NettyClient() {
+        ShutdownHook.shutdownHook();
+        group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
@@ -46,26 +55,75 @@ public class NettyClient implements RpcClient {
                         pipeline.addLast(new NettyClientHandler());
                     }
                 });
+        this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
+        this.unprocessedRequest = SingletonFactory.getInstance(UnprocessedRequest.class);
+        this.serviceDiscovery = new NacosServiceDiscovery();
+    }
+
+    @SneakyThrows
+    public Channel connect(InetSocketAddress inetSocketAddress){
+        CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
+        bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future ->{
+            if(future.isSuccess()){
+                log.info("Netty客户端成功连接");
+                // 子线程去获取channel
+                completableFuture.complete(future.channel());
+            } else {
+                log.error("Netty客户端连接失败");
+                throw new IllegalStateException();
+            }
+        });
+        return completableFuture.get();
+    }
+
+    @SneakyThrows
+    @Override
+    public Object sendRequest(RpcRequest rpcRequest) {
+        // build return value
+        CompletableFuture<RpcResponse<Object>> resultFuture = new CompletableFuture<>();
+        // get server address
+//        InetSocketAddress inetSocketAddress = new InetSocketAddress("192.168.31.92", 8000);
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
+        // get  server address related channel
+        Channel channel = getChannel(inetSocketAddress);
+        if (channel.isActive()) {
+            log.info("channel处于连接状态");
+            unprocessedRequest.put(rpcRequest.getRequestId(),resultFuture);
+            channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener)future -> {
+                if (future.isSuccess()) log.info("Netty客户端向服务端发送请求:{}", rpcRequest.toString());
+                else {
+                    log.error("Netty客户端向服务端发送请求失败",future.cause());
+                    future.channel().close();
+                    resultFuture.completeExceptionally(future.cause());
+                }
+            });
+        } else {
+            log.error("channel连接失败");
+            throw new IllegalStateException();
+        }
+        // 为了复用此处就不能阻塞关闭,引入CompletableFuture
+        /*channel.closeFuture().sync();
+        log.info("channel关闭");
+        AttributeKey<Object> key = AttributeKey.valueOf("RpcResponse");
+        RpcResponse response = (RpcResponse) channel.attr(key).get();
+        return response.getData();*/
+        return resultFuture;
+    }
+
+    public Channel getChannel(InetSocketAddress inetSocketAddress){
+        Channel channel = channelProvider.get(inetSocketAddress);
+        if(channel == null){
+            log.info("新的channel");
+            channel = connect(inetSocketAddress);
+            channelProvider.set(inetSocketAddress,channel);
+        }
+        return channel;
     }
 
     @Override
-    public Object sendRequest(RpcRequest rpcRequest) {
-        try {
-//            CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
-            ChannelFuture channelFuture = bootstrap.connect("192.168.31.92", 8000).sync();
-            log.info("Netty客户端成功连接到服务器");
-            Channel channel = channelFuture.channel();
-            channel.writeAndFlush(rpcRequest).addListener(future -> {
-                if(future.isSuccess()) log.info("Netty客户端向服务端发送请求:{}",rpcRequest.toString());
-                else log.error("Netty客户端向服务端发送请求错误");
-            });
-            channel.closeFuture().sync();
-            AttributeKey<Object> key = AttributeKey.valueOf("RpcResponse");
-            RpcResponse response = (RpcResponse)channel.attr(key).get();
-            return response.getData();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void close(){
+        log.info("group关闭");
+        group.shutdownGracefully();
     }
+
 }

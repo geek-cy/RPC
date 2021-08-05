@@ -7,20 +7,29 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="JVM" />
         <module name="Java" />
+        <module name="RPC-Core" />
+        <module name="Executors" />
+        <module name="Annotation" />
         <module name="Proxy" />
         <module name="RPC-Client" />
         <module name="Reflect" />
-        <module name="RPC-Core" />
+        <module name="dubbo-provider" />
         <module name="Netty" />
-        <module name="RPCDemo" />
-        <module name="Executors" />
         <module name="RPC-Server" />
+        <module name="dubbo-consumer" />
+        <module name="dubbo-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Annotation" target="8" />
+      <module name="dubbo-api" target="8" />
+      <module name="dubbo-consumer" target="8" />
+      <module name="dubbo-provider" target="8" />
       <module name="Executors" target="8" />
       <module name="Java" target="8" />
+      <module name="JVM" target="8" />
       <module name="Netty" target="8" />
       <module name="NettyPro" target="8" />
       <module name="Proxy" target="8" />

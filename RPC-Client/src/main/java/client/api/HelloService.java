@@ -1,4 +1,6 @@
-package api;
+package client.api;
+
+import api.HelloObject;
 
 /**
  * 客户端调用的接口

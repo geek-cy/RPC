@@ -1,0 +1,12 @@
+server:
+  port: 9000
+
+dubbo:
+  application:
+    name: consumer
+  registry:
+    address: nacos://192.168.31.92:8848
+    timeout: 6000
+  protocol:
+    name: dubbo
+    port: 8500

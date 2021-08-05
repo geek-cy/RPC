@@ -1,4 +1,6 @@
-package enums;
+package exception;
+
+import enums.RpcErrorMessageEnum;
 
 /**
  * @author Cy

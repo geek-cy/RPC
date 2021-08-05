@@ -12,7 +12,7 @@ import serializer.CommonSerializer;
  * @author Cy
  * @date 2021/6/5 20:46
  */
-public class CommonEncoder extends MessageToByteEncoder {
+public class CommonEncoder extends MessageToByteEncoder<Object> {
 
     private static final int MAGIC_NUMBER = 0xCAFEBABE;
 

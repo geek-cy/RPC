@@ -1,6 +1,6 @@
 # RPC
-参考自My-RPC-Framework和
-本框架是一款基于 Netty 实现的 RPC 框架，客户端通过动态代理的方式调用远程计算机上的服务
+
+参考自My-RPC-Framework和guide-rpc-framework 本框架是一款基于 Netty 实现的 RPC 框架，客户端通过动态代理的方式调用远程计算机上的服务
 
 ## 特性
 
@@ -36,90 +36,3 @@
 | Data Length     | 数据字节的长度                                               |
 | Data Bytes      | 传输的对象，通常是一个`RpcRequest`或`RpcClient`对象，取决于`Package Type`字段，对象的序列化方式取决于`Serializer Type`字段。 |
 
-## 使用
-
-### 定义调用接口
-
-```java
-package top.guoziyang.rpc.api;
-
-public interface HelloService {
-    String hello(String name);
-}
-```
-
-### 在服务提供侧实现该接口
-
-```java
-package top.guoziyang.test;
-
-import top.guoziyang.rpc.api.HelloService;
-
-@Service
-public class HelloServiceImpl implements HelloService {
-    @Override
-    public String hello(String name) {
-        return "Hello, " + name;
-    }
-}
-```
-
-### 编写服务提供者
-
-```java
-package top.guoziyang.test;
-
-import top.guoziyang.rpc.api.HelloService;
-import top.guoziyang.rpc.serializer.CommonSerializer;
-import top.guoziyang.rpc.transport.netty.server.NettyServer;
-
-@ServiceScan
-public class NettyTestServer {
-    public static void main(String[] args) {
-        NettyServer server = new NettyServer("127.0.0.1", 9999, CommonSerializer.PROTOBUF_SERIALIZER);
-        server.start();
-    }
-}
-```
-
-这里选用 Netty 传输方式，并且指定序列化方式为 Google Protobuf 方式。
-
-### 在服务消费侧远程调用
-
-```java
-package top.guoziyang.test;
-
-import top.guoziyang.rpc.api.HelloService;
-import top.guoziyang.rpc.serializer.CommonSerializer;
-import top.guoziyang.rpc.transport.RpcClient;
-import top.guoziyang.rpc.transport.RpcClientProxy;
-import top.guoziyang.rpc.transport.netty.client.NettyClient;
-
-public class NettyTestClient {
-
-    public static void main(String[] args) {
-        RpcClient client = new NettyClient(CommonSerializer.KRYO_SERIALIZER, new RoundRobinLoadBalancer());
-        RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
-        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        String res = helloService.hello("ziyang");
-        System.out.println(res);
-    }
-}
-```
-
-这里客户端也选用了 Netty 的传输方式，序列化方式采用 Kryo 方式，负载均衡策略指定为轮转方式。
-
-### 启动
-
-在此之前请确保 Nacos 运行在本地 `8848` 端口。
-
-首先启动服务提供者，再启动消费者，在消费侧会输出`Hello, ziyang`。
-
-## TODO
-
-- 使用接口方式自动注册服务
-- 配置文件
-
-## LICENSE
-
-My-RPC-Framework is under the MIT license. See the [LICENSE](https://github.com/CN-GuoZiyang/My-RPC-Framework/blob/master/LICENSE) file for details.

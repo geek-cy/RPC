@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId> <!-- Use 'server.client.netty-all' for 4.0 or above -->
+            <artifactId>netty-all</artifactId> <!-- Use 'service.client.netty-all' for 4.0 or above -->
             <version>4.1.42.Final</version>
         </dependency>
         <dependency>
