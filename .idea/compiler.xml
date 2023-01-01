@@ -23,21 +23,21 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Annotation" target="8" />
-      <module name="dubbo-api" target="8" />
-      <module name="dubbo-consumer" target="8" />
-      <module name="dubbo-provider" target="8" />
-      <module name="Executors" target="8" />
-      <module name="Java" target="8" />
-      <module name="JVM" target="8" />
+      <module name="Annotation" target="1.8" />
+      <module name="dubbo-api" target="1.8" />
+      <module name="dubbo-consumer" target="1.8" />
+      <module name="dubbo-provider" target="1.8" />
+      <module name="Executors" target="1.8" />
+      <module name="Java" target="1.8" />
+      <module name="JVM" target="1.8" />
       <module name="Netty" target="8" />
       <module name="NettyPro" target="8" />
-      <module name="Proxy" target="8" />
-      <module name="Reflect" target="8" />
-      <module name="RPC-Client" target="8" />
+      <module name="Proxy" target="1.8" />
+      <module name="Reflect" target="1.8" />
+      <module name="RPC-Client" target="1.8" />
       <module name="RPC-Common" target="8" />
-      <module name="RPC-Core" target="8" />
-      <module name="RPC-Server" target="8" />
+      <module name="RPC-Core" target="1.8" />
+      <module name="RPC-Server" target="1.8" />
       <module name="RPCDemo" target="8" />
     </bytecodeTargetLevel>
   </component>
